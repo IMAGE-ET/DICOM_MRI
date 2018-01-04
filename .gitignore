@@ -1,2 +1,5 @@
+.gitignore
+.ipynb_checkpoints
+__pycache__
 final_data
 main.ipynb

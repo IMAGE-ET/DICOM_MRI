@@ -6,7 +6,7 @@
 The main file is called main.py. Executing this file corresponds to part 1 and part 2.
 
 
-### Part 1: Parse the DICOM images and Contour Files
+## Part 1: Parse the DICOM images and Contour Files
 
 ##### Task: Using the functions given above, build a pipeline that will parse the DICOM images and i-contour contour files, making sure to pair the correct DICOM image(s) with the correct contour file. After parsing each i-contour file, make sure to translate the parsed contour to a boolean mask.
 
@@ -39,7 +39,7 @@ When I am doing the mapping between the 2D DICOM images and the contour files, t
 However with this approach, I am wasting 90% of the images because there are only 20 contours for 200 slide images. I was thinking that I could generate the missing labels by K-Nearest neighbors or linear interpolation. If we assume that the semantic segmentation varies continuously from slide to slide within the 3D image, it would be reasonable to input the missing segmentation labels using the segmentation labels of neighbouring slides. Using this method, I could have more training examples but the labels would be more noisy.
 
 
-### Part 2: Model training pipeline
+## Part 2: Model training pipeline
  
 
 Using the saved information from the DICOM images and contour files, add an additional step to the pipeline that will load batches of data for input into a 2D deep learning model. This pipeline should meet the following criteria:
@@ -71,15 +71,14 @@ The idea is to first create a tf.data.Dataset object that  I create an Iterator 
 ##### Q1: Did you change anything from the pipelines built in Parts 1 to better streamline the pipeline built in Part 2? If so, what? If not, is there anything that you can imagine changing in the future?
 
 I didn't change anything from the Part 1 because I use the np.array generated in Part 1 to create a tf.data.Dataset object. In the future, I will need to split the dataset into a training, validation and test set (or some cross-validation). I will also normalize the datasets. I could transform the Dataset into a new Dataset by chaining method calls on the tf.data.Dataset object.
- 
- 
-#####Q2: How do you/did you verify that the pipeline was working correctly?
+
+##### Q2: How do you/did you verify that the pipeline was working correctly?
  
 I created a function called **get\_train\_batches()** in the model object to generate a list of numpy arrays of images and labels for **epochs**. I checked that these arrays were both of shape **batchsizeX256X256**.
 
 I also used a label corresponding to the image index in the original dataset to verify that the batches were samples randomly and without replacement in every epochs.
  
-#####Q3: Given the pipeline you have built, can you see any deficiencies that you would change if you had more time? If not, can you think of any improvements/enhancements to the pipeline that you could build in?
+##### Q3: Given the pipeline you have built, can you see any deficiencies that you would change if you had more time? If not, can you think of any improvements/enhancements to the pipeline that you could build in?
 
 Instead of first loading the np.arrays and then building the dataset, I could load the path to the images. Indeed, if the dataset if too big, I won't be able to load the numpy array into memory. In this case I would need to load only the filenames and load the images at each training step.
 
