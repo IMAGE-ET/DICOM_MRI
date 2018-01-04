@@ -15,6 +15,7 @@ class Dataset:
                labels: np.array of the boolean masks
         :return dataset: tf.data.Dataset object
         """
+        assert (images.shape == labels.shape)
         
         dataset = tf.data.Dataset.from_tensor_slices((images, labels))
         dataset = dataset.shuffle(buffer_size=5000)
