@@ -24,7 +24,7 @@ In part 1 of the main.py file, there are 2 function calls:
 
 I plotted some segmentation samples to verify that I extracted the correct labels. We can see on the following images that the segmentation makes sense.
 
-![Image of Yaktocat]
+![Segmentation example]
 (https://github.com/plcedoz/DICOM_MRI/blob/master/output/segmentation_samples.png)
 
 
