@@ -21,6 +21,5 @@ if __name__ == "__main__":
     batches = model.get_train_batches()
 
     #Shape verification
-    for batch in batches:
-        print(batch[0].shape)
-        print(batch[1].shape)
+    print ("Size of the image batch:", batches[0][0].shape)
+    print ("Size of the label batch:", batches[0][1].shape)
