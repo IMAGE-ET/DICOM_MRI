@@ -72,6 +72,7 @@ def get_data(interpolation=False):
                         images.append(image)
                         labels.append(mask)
             if interpolation == True:
+                #Not implemented yet.
                 pass
     images = np.asarray(images)
     labels = np.asarray(labels)

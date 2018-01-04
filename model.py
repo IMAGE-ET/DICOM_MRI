@@ -18,11 +18,6 @@ class Model:
         self.config = config
         self.len_trainset = len(images)
         self.add_dataset_op(images, labels)
-        #self.add_placeholders()
-        #self.add_model()
-        #self.add_pred_op()
-        #self.add_loss_op()
-        #self.add_train_op()
 
     def add_dataset_op(self, images, labels):
         """Create a dataset_op which corresponds to a tf.data.Iterator
