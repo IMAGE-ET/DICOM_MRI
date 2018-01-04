@@ -81,7 +81,7 @@ I also used a label corresponding to the image index in the original dataset to 
  
 #####Q3: Given the pipeline you have built, can you see any deficiencies that you would change if you had more time? If not, can you think of any improvements/enhancements to the pipeline that you could build in?
 
-Instead of first loading the np.arrays and then building the dataset, I could only load the path to the images. Indeed, if the dataset if too big, I won't be able to load the numpy array into memory. In this case I would need to load only the filenames and load the images at each training step.
+Instead of first loading the np.arrays and then building the dataset, I could load the path to the images. Indeed, if the dataset if too big, I won't be able to load the numpy array into memory. In this case I would need to load only the filenames and load the images at each training step.
 
 In Part 1, I was talking about the value inputation to avoid wasting 90% of the data, by inputing the missing labels using neighboring slides in the image.
  
