@@ -25,7 +25,7 @@ In part 1 of the main.py file, there are 2 function calls:
 I plotted some segmentation samples to verify that I extracted the correct labels. We can see on the following images that the segmentation makes sense.
 
 ![Segmentation example]
-(/output/segmentation_samples.png)
+(https://github.com/plcedoz/DICOM_MRI/blob/master/output/segmentation_samples.png)
 
 
 #### Q2: What changes did you make to the code, if any, in order to integrate it into our production code base?
