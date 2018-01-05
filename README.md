@@ -12,7 +12,7 @@ The main file is called main.py. Executing this file corresponds to part 1 and p
 
 In part 1 of the main.py file, there are 2 function calls:
 
--**get_data()** (from utils.preprocess): This function collects all the images and the corresponding labels and generate numpy arrays. It builds on top of the functions from the starter code parsing.py that were not modified:
+-**get_data()** (from utils.data_Q1.py): This function collects all the images and the corresponding labels and generate numpy arrays. It builds on top of the functions from the starter code parsing.py that were not modified:
 
 * The first step: **get\_corresponding\_ids()** is to link the DICOM files with the contour files using the link file 
 
@@ -30,7 +30,7 @@ I plotted some segmentation samples to verify that I extracted the correct label
 
 #### Q2: What changes did you make to the code, if any, in order to integrate it into our production code base?
  
-I looped over all patients, all DICOM files and all contour files to identify the correponding pairs between images and targets and save them into np.arrays: "images" and "labels".
+I looped over all patients, all DICOM files and all contour files to identify the correponding pairs between images and targets and store them as np.arrays: "images" and "labels".
 
 
 #### Ways of improvements:
@@ -52,34 +52,40 @@ Using the saved information from the DICOM images and contour files, add an addi
 * Within each epoch (e.g. iteration over all studies once), samples from a batch should be loaded randomly from the
 entire dataset.
  
-The ouptut of part 1 are 2 np.arrays of "images" and their corresponding "labels" for the full dataset.
+The ouptut of part 1 are np.arrays of "images" and their corresponding "labels" for the full dataset.
 
-The aim of part 2 is to randomly sample **batchsize** samples without replacement from the dataset until there are no more samples (end of the epoch) and repeat the procedure for each epoch. To do so I could use functions from numpy like np.random.sample() or np.random.permutation(). However, I decided to use an API from tensorflow called tf.data that automates the generation of training batches to feed into a neural network.
+The aim of part 2 is to randomly sample **batchsize** samples from the dataset until there are no more samples (end of the epoch) and repeat the procedure for each epoch. To do so I could use functions from numpy like np.random.sample() or np.random.permutation(). However, I decided to use an API from tensorflow called tf.data that automates the generation of training batches to feed into a neural network.
 
-* The first step is to create a Config object (config.py) that holds all the parameters: **batch\_size**, **epochs**, and later all the learning parameters to train the model.
+* The first step is to create a Config object (config.py) that holds all the parameters: **batch\_size**, **epochs**, and in the next stage the learning parameters to train the model.
 
-* The second step is to create a **Model** object (model.py) that is initialized using the **config** object, the **images** and **labels** np.arrays. This **Model** object has an attribute called **dataset\_op**, which is a tf.data.Iterator object initialized using a tf.data.Dataset object (see utils.dataset.py). The benefit of this method is that the shuffling and batch creation is done within the tf.data.Dataset object creation and the tf.data.Iterator object yields tf.tensors **image** and **label** of desired shape (**batch\_size**) at every training step using **Iterator.get_next()**. These tensors can be directly used within a tensorflow model in the next step of the challenge.
+* The second step is to create a **Model** object (model.py) that is initialized using the **config** object. This **Model** object has an attribute called **dataset\_op**, which is a tf.data.Iterator object initialized using a tf.data.Dataset object (see **utils.data\_Q2.py**). The benefit of this method is that the shuffling and batch creation is done within the tf.data.Dataset object creation and the tf.data.Iterator object yields tf.tensors **image** and **label** of desired shape (**batch\_size**) at every training step using **Iterator.get_next()**. These tensors can be directly used within a tensorflow model in the next step of the challenge.
 
 For the purpose of this exercise, I added a method to the Model object called **get\_train\_batches()** to run a tensorflow session and evaluate the **image** and **label** tensors at every training steps. The resulting np.arrays are stored as tuples within a python list.
 
 
 ##### Q1: Did you change anything from the pipelines built in Parts 1 to better streamline the pipeline built in Part 2? If so, what? If not, is there anything that you can imagine changing in the future?
 
-I didn't change anything from the Part 1 because I use the np.array generated in Part 1 to create a tf.data.Dataset object. In the future, I will need to split the dataset into a training, validation and test set (or some cross-validation). I will also normalize the datasets.
+The pipeline from Part 1 was changed. The problem of part 1 is that it loads a np.array of the full dataset ("images" and "labels"). Here, the dataset only contains 100 examples so it is fine but in the future it might contain much more examples so it wouldn't fit in memory.
 
-In the future, if the dataset is too big I won't be able to fit the full np.array in memory. In this case, I would build a tf.data.dataset object with the filenames of the images and labels and parse the images at every training step in the backend using **tf.data.Dataset.map(parse_function)**.
+
+To prevent this scalability issue, I modified the code from **utils.data\_Q1.py** to **utils.data\_Q2.py** where instead of building a full np.array of the dataset, I only use the filenames of the images and labels to build the dataset. Then, I am using **tf.data.Dataset.map(parse_function)** to parse the images and labels at every training step in the backend.
+
+
+In the future, I might also split the datasets into training, validation and test sets (or some cross-validation) and normalize them.
+
+
 
 ##### Q2: How do you/did you verify that the pipeline was working correctly?
  
-I created a method called **get\_train\_batches()** in the model object to generate a list of numpy arrays of images and labels for each **epochs**. I checked that these arrays were both of shape **batchsizeX256X256**.
+I created a method called **get\_train\_batches()** in the model object to generate a list of numpy arrays of images and labels for each **epochs**. I checked that these arrays were both of shape **batchsizeX256X256** at every training step.
 
-I also used a "fake" label corresponding to the image index in the original dataset to verify that the batches were samples randomly and without replacement in every epochs.
+I also used a "fake" label corresponding to the image index in the original dataset to verify that the batches were samples randomly at every epochs.
  
 ##### Q3: Given the pipeline you have built, can you see any deficiencies that you would change if you had more time? If not, can you think of any improvements/enhancements to the pipeline that you could build in?
 
-In the future, if the dataset is too big I won't be able to fit the full np.array in memory. In this case, I would only generate the filenames of the images and labels and parse the images "on the go" at every training step.
+Thanks to the use of tf.data and the filenames list, the model is scalable.
 
-In Part 1, I was talking about the value inputation to avoid wasting 90% of the data, by inputing the missing labels using neighboring slides in the image.
+However, in part 1 I was talking about the value inputation to avoid wasting some data. An improvement would be to inpute the missing labels using neighboring slides in the image.
 
 I would also add some preprocessing steps to the Dataset object: normalization, train/val/test split, cross validation, etc...
  

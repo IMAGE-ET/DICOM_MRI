@@ -1,39 +1,38 @@
 import tensorflow as tf
 import numpy as np
 
-from utils.dataset import Dataset
-from utils.dataset import get_iterator
+from utils.data_Q2 import get_dataset
+from utils.data_Q2 import get_iterator
+from utils.data_Q2 import get_files
 
 class Model:
     """
     Class to define the model. For the moment, only the dataset loading part is implemented
     """
-    def __init__(self, config, images, labels):
+    def __init__(self, config):
         """
-        :param config: Configuration parameters
-               images: np.array of the DICOM images
-               labels: np.array of the boolean masks
+        :param config: Configuration parameters (batch_size, epochs..)
         """
         
         self.config = config
-        self.len_trainset = len(images)
-        self.add_dataset_op(images, labels)
+        self.add_dataset_op()
 
-    def add_dataset_op(self, images, labels):
+    def add_dataset_op(self):
         """Create a dataset_op which corresponds to a tf.data.Iterator
-        :param images: np.array of the DICOM images
-               labels: np.array of the boolean masks
         """
+        #Create the tf.data.Dataset object
+        image_files, label_files = get_files()
+        self.len_trainset = len(image_files)
+        dataset = get_dataset(self.config, image_files, label_files)
         
-        dataset = Dataset(self.config)
-        dataset = dataset.get_dataset(images, labels)
+        #Create the tf.data.Iterator object
         self.iterator = get_iterator(dataset)
         self.image, self.label = self.iterator.get_next()
         self.dataset_op = self.iterator.make_initializer(dataset)
     
     def get_train_batches(self):
         """Create a list of np.array batches for every training steps 
-        :return batches: List of batches.
+        :return batches: List of batches (np.arrays)
         """
         
         batches = []

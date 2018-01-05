@@ -6,6 +6,8 @@ from dicom.errors import InvalidDicomError
 import numpy as np
 from PIL import Image, ImageDraw
 
+import tensorflow as tf
+
 
 def parse_contour_file(filename):
     """Parse the given contour filename
@@ -15,7 +17,7 @@ def parse_contour_file(filename):
     """
 
     coords_lst = []
-
+    
     with open(filename, 'r') as infile:
         for line in infile:
             coords = line.strip().split()
