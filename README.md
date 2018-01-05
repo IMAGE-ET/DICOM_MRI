@@ -54,13 +54,13 @@ entire dataset.
  
 The ouptut of part 1 are np.arrays of "images" and their corresponding "labels" for the full dataset.
 
-The aim of part 2 is to randomly sample **batchsize** samples from the dataset until there are no more samples (end of the epoch) and repeat the procedure for each epoch. To do so I could use functions from numpy like np.random.sample() or np.random.permutation(). However, I decided to use an API from tensorflow called tf.data that automates the generation of training batches to feed into a neural network.
+The aim of part 2 is to randomly sample **batchsize** samples from the dataset until there are no more samples (end of the epoch) and repeat the procedure for each epoch. To do so I could use functions from numpy like **np.random.sample()** or **np.random.permutation()**. However, I decided to use an API from tensorflow called **tf.data** that automates the generation of training batches to feed into a neural network.
 
 * The first step is to create a Config object (config.py) that holds all the parameters: **batch\_size**, **epochs**, and in the next stage the learning parameters to train the model.
 
 * The second step is to create a **Model** object (model.py) that is initialized using the **config** object. This **Model** object has an attribute called **dataset\_op**, which is a tf.data.Iterator object initialized using a tf.data.Dataset object (see **utils.data\_Q2.py**). The benefit of this method is that the shuffling and batch creation is done within the tf.data.Dataset object creation and the tf.data.Iterator object yields tf.tensors **image** and **label** of desired shape (**batch\_size**) at every training step using **Iterator.get_next()**. These tensors can be directly used within a tensorflow model in the next step of the challenge.
 
-For the purpose of this exercise, I added a method to the Model object called **get\_train\_batches()** to run a tensorflow session and evaluate the **image** and **label** tensors at every training steps. The resulting np.arrays are stored as tuples within a python list.
+For the purpose of this exercise, I added a method to the Model object called **get\_train\_batches()** to run a tensorflow session and evaluate the **image** and **label** tensors at every training steps. The resulting np.arrays (one numpy array for images and one numpy array for targets) are stored as tuples within a python list.
 
 
 ##### Q1: Did you change anything from the pipelines built in Parts 1 to better streamline the pipeline built in Part 2? If so, what? If not, is there anything that you can imagine changing in the future?
