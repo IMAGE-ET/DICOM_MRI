@@ -67,7 +67,7 @@ For the purpose of this exercise, I added a method to the Model object called **
 
 I didn't change anything from the Part 1 because I use the np.array generated in Part 1 to create a tf.data.Dataset object. In the future, I will need to split the dataset into a training, validation and test set (or some cross-validation). I will also normalize the datasets.
 
-In the future, if the dataset is too big I won't be able to fit the full np.array in memory. In this case, I would only generate the filenames of the images and labels and parse the images "on the go" at every training step.
+In the future, if the dataset is too big I won't be able to fit the full np.array in memory. In this case, I would build a tf.data.dataset object with the filenames of the images and labels and parse the images at every training step in the backend using **tf.data.Dataset.map(parse_function)**.
 
 ##### Q2: How do you/did you verify that the pipeline was working correctly?
  
