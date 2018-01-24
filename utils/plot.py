@@ -28,4 +28,31 @@ def plot_segmentation(images, labels, nb_samples=3):
     print ("Segmentation samples saved to output/")
     fig.savefig('output/segmentation_samples.png')
 
-    
+
+def plot_generator(generator, nb_samples=3):
+    count = 0
+    plt.figure(figsize=(15,15))
+    while count < nb_samples:
+        X, y = next(generator)
+        image = X[0]
+        i_mask = y[0][0]
+        o_mask = y[1][0]
+        plt.subplot(nb_samples, 4, count*4 + 1)
+        plt.imshow(image)
+        plt.title("Original Image")
+        plt.axis('off')
+        plt.subplot(nb_samples, 4, count*4 + 2)
+        plt.imshow(i_mask)
+        plt.title("Inner contour")
+        plt.axis('off')
+        plt.subplot(nb_samples, 4, count*4 + 3)
+        plt.imshow(o_mask)
+        plt.title("Outer contour")
+        plt.axis('off')
+        plt.subplot(nb_samples, 4, count*4 + 4)
+        plt.imshow(image + 1000*i_mask + 1000*o_mask)
+        plt.title("Superposition")
+        plt.axis('off')
+        count += 1
+    plt.savefig("output/generator")
+

@@ -39,7 +39,7 @@ def parse_dicom_file(filename):
     try:
         dcm = dicom.read_file(filename)
         dcm_image = dcm.pixel_array
-
+        
         try:
             intercept = dcm.RescaleIntercept
         except AttributeError:
@@ -52,6 +52,7 @@ def parse_dicom_file(filename):
         if intercept != 0.0 and slope != 0.0:
             dcm_image = dcm_image*slope + intercept
         dcm_dict = {'pixel_data' : dcm_image}
+
         return dcm_dict
     except InvalidDicomError:
         return None
@@ -69,6 +70,6 @@ def poly_to_mask(polygon, width, height):
 
     # http://stackoverflow.com/a/3732128/1410871
     img = Image.new(mode='L', size=(width, height), color=0)
-    ImageDraw.Draw(img).polygon(xy=polygon, outline=0, fill=1)
+    ImageDraw.Draw(img).polygon(xy=polygon, outline=2, fill=1)
     mask = np.array(img).astype(bool)
     return mask

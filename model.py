@@ -1,9 +1,7 @@
-import tensorflow as tf
 import numpy as np
 
-from utils.data_Q2 import get_dataset
-from utils.data_Q2 import get_iterator
-from utils.data_Q2 import get_files
+from utils.data import get_data
+from utils.generator import Generator
 
 class Model:
     """
@@ -15,34 +13,14 @@ class Model:
         """
         
         self.config = config
-        self.add_dataset_op()
 
-    def add_dataset_op(self):
+
+    def add_data(self):
         """Create a dataset_op which corresponds to a tf.data.Iterator
         """
-        #Create the tf.data.Dataset object
-        image_files, label_files = get_files()
-        self.len_trainset = len(image_files)
-        dataset = get_dataset(self.config, image_files, label_files)
+        partition, labels = get_data()
+        generator = Generator(self.config)
+        self.train_generator = generator.generate(partition['train'], labels)
+        self.val_generator = generator.generate(partition['val'], labels)
         
-        #Create the tf.data.Iterator object
-        self.iterator = get_iterator(dataset)
-        self.image, self.label = self.iterator.get_next()
-        self.dataset_op = self.iterator.make_initializer(dataset)
-    
-    def get_train_batches(self):
-        """Create a list of np.array batches for every training steps 
-        :return batches: List of batches (np.arrays)
-        """
         
-        batches = []
-        with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
-            for epoch in range(self.config.epochs):
-                sess.run(self.dataset_op)
-                nb_batch = int(np.ceil(self.len_trainset/self.config.batch_size))
-                for batch in range(nb_batch):
-                    image_array, label_array = sess.run([self.image, self.label])
-                    batches.append((image_array, label_array))
-        return batches
-    

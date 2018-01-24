@@ -7,5 +7,6 @@ class Config:
     """
     # data
     data_path = 'final_data'
-    batch_size = 8
+    batch_size = 1
+    shuffle = False
     epochs = 10
