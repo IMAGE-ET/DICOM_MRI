@@ -56,7 +56,9 @@ def parse_function(image_file, labels):
     
     dcm_dict = parse_dicom_file(image_file)
     image = dcm_dict["pixel_data"]
-
+    image = image.astype("float")
+    image *= 255.0/image.max()
+    
     i_contour_file = labels[image_file][0]
     i_coords_lst = parse_contour_file(i_contour_file)
     i_mask = poly_to_mask(polygon=i_coords_lst, width=image.shape[0], height=image.shape[1])
