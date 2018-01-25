@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib
-#%matplotlib inline
 import matplotlib.pyplot as plt
 
 from utils.parsing import poly_to_mask
@@ -9,6 +8,11 @@ from segmentation import get_threshold_intensity
 
 
 def plot_generator(generator, n_samples):
+    """Plot segmentation examples using a python generator
+
+    :param generator (Python generator): Yields examples of the form: images, (i_masks, o_masks)
+    """
+    
     count = 0
     plt.figure(figsize=(15,4*n_samples))
     plt.gray()
@@ -39,7 +43,15 @@ def plot_generator(generator, n_samples):
     
 
 def plot_segmentation(image, o_mask, i_mask, mode="intensity", algorithm="gmm"):
+    """Plot the predicted inner contour segmentation
 
+    :param image (np.array): Image to plot
+    :param o_mask (no.array): Segmentation mask of the outer contour
+    :param i_mask (no.array): Segmentation mask of the inner contour
+    :param mode (str, optional): Mode of segmentation: "intensity" or "edges" (see get_i_contour)
+    :param algorithm (str, optional): Algorithm for thresholding: "gmm" or "kmeans" (see get_i_contour)
+    """
+    
     i_contour = get_i_contour(image, o_mask, mode=mode, algorithm=algorithm)
     pred_i_mask = poly_to_mask(i_contour, image.shape[0], image.shape[1])
 
@@ -57,12 +69,20 @@ def plot_segmentation(image, o_mask, i_mask, mode="intensity", algorithm="gmm"):
     plt.imshow(image + 200*i_mask)
     plt.title("True i_contour")
     plt.axis('off')
-    plt.savefig("output/segmentation.jpg")
+    plt.savefig("output/segmentation_%s.jpg"%mode)
     plt.close()
 
     
 def plot_histogram(image, o_mask, algorithm):
-
+    """Plot the histogram of pixel intensity values along with the computed threshold
+    
+    :param image (np.array): Image to plot
+           o_mask (no.array): Segmentation mask of the outer contour
+           i_mask (no.array): Segmentation mask of the inner contour
+           mode (str, optional): Mode of segmentation: "intensity" or "edges" (see get_i_contour)
+           algorithm (str, optional): Algorithm for thresholding: "gmm" or "kmeans" (see get_i_contour)
+    """
+    
     threshold = get_threshold_intensity(image, o_mask, algorithm=algorithm)
     data = list(image[o_mask])
     plt.hist(data, bins=40, histtype='stepfilled')
