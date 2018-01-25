@@ -8,29 +8,32 @@ from segmentation import get_i_contour
 from segmentation import get_threshold_intensity
 
 
-def plot_segmentation(image, o_mask, i_mask):
-    threshold = get_threshold_intensity(image, o_mask, algorithm="gmm")
-    i_contour = get_i_contour(image, o_mask, threshold)
+def plot_segmentation(image, o_mask, i_mask, mode="intensity", algorithm="gmm"):
+    i_contour = get_i_contour(image, o_mask, mode=mode, algorithm=algorithm)
     pred_i_mask = poly_to_mask(i_contour, image.shape[0], image.shape[1])
 
     plt.figure(figsize=(20,20))
+    plt.gray()
     plt.subplot(131)
     plt.imshow(image)
     plt.title("Original Image")
     plt.axis('off')
     plt.subplot(132)
-    plt.imshow(image + 500*pred_i_mask)
+    plt.imshow(image + 200*pred_i_mask)
     plt.title("Predicted i_contour")
     plt.axis('off')
     plt.subplot(133)
-    plt.imshow(image + 500*i_mask)
+    plt.imshow(image + 200*i_mask)
     plt.title("True i_contour")
     plt.axis('off')
+    plt.show()
+    plt.close()
 
 
 def plot_generator(generator, nb_samples=3):
     count = 0
     plt.figure(figsize=(15,15))
+    plt.gray()
     while count < nb_samples:
         X, y = next(generator)
         image = X[0]
@@ -49,20 +52,24 @@ def plot_generator(generator, nb_samples=3):
         plt.title("Outer contour")
         plt.axis('off')
         plt.subplot(nb_samples, 4, count*4 + 4)
-        plt.imshow(image + 1000*i_mask + 1000*o_mask)
+        plt.imshow(image + 200*i_mask + 200*o_mask)
         plt.title("Superposition")
         plt.axis('off')
         count += 1
     plt.savefig("output/generator")
+    plt.show()
+    plt.close()
 
     
-def plot_histogram(image, o_mask, threshold):
-    
+def plot_histogram(image, o_mask, algorithm):
+
+    threshold = get_threshold_intensity(image, o_mask, algorithm=algorithm)
     data = list(image[o_mask])
     plt.hist(data, bins=40, histtype='stepfilled')
     plt.axvline(x=threshold, c='black')
     plt.xlim(0,255)
     plt.title("Normalized pixel intensity")
     plt.savefig("output/histogram")
-
+    plt.show()
+    plt.close()
     
